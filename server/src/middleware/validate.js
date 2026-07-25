@@ -25,4 +25,31 @@ const validate = (schema) => {
   };
 };
 
-module.exports = { validate };
+/**
+ * Express middleware factory that validates request query string against a Zod schema.
+ * Attaches parsed (and transformed) query to req.query on success.
+ * Throws 400 with detailed field errors on failure.
+ */
+const validateQuery = (schema) => {
+  return (req, _res, next) => {
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      const errors = result.error.errors.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+
+      const error = new Error('Validation failed');
+      error.statusCode = 400;
+      error.code = 'VALIDATION_ERROR';
+      error.details = errors;
+      return next(error);
+    }
+
+    // Replace query with parsed (transformed) values
+    req.query = result.data;
+    next();
+  };
+};
+
+module.exports = { validate, validateQuery };
