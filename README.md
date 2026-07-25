@@ -86,15 +86,22 @@ cd server
 cp .env.example .env
 ```
 
-Edit `server/.env` with your values:
+Edit `server/.env` with your values. The server will **fail fast** if required
+variables are missing.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | API server port | `5000` |
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/munch` |
-| `JWT_SECRET` | Secret for signing JWT tokens | — |
-| `CLIENT_URL` | Frontend URL (for CORS) | `http://localhost:5173` |
-| `NODE_ENV` | Environment mode | `development` |
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `PORT` | No | API server port | `5000` |
+| `NODE_ENV` | No | Environment mode | `development` |
+| `CLIENT_URL` | No | Frontend URL (for CORS) | `http://localhost:5173` |
+| `MONGODB_URI` | No | MongoDB connection string | `mongodb://localhost:27017/munch` |
+| `JWT_SECRET` | **Yes** | Secret for signing JWT tokens | — |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID (for future token verification) | — |
+
+**Generate a secure JWT_SECRET:**
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
 
 ### 3. Start Development Servers
 
@@ -149,7 +156,7 @@ npm run dev
 | # | Milestone | Status |
 |---|-----------|--------|
 | 1 | Project scaffold + Design system | ✅ |
-| 2 | Auth (email/password + Google) + Profile shell | ⬜ |
+| 2 | Auth (email/password + Google) + Profile shell | ✅ |
 | 3 | Home / Discovery — browse, search, filters | ⬜ |
 | 4 | Item detail + Customization + Favourites | ⬜ |
 | 5 | Cart + Checkout (stubbed payment) | ⬜ |

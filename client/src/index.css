@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-brand-cream text-brand-charcoal font-body antialiased;
+  }
+
+  /* Tabular nums for prices */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Focus ring */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-pink ring-offset-2 ring-offset-brand-cream;
+  }
+
+  /* Smooth scrollbar for desktop */
+  @media (hover: hover) {
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(31, 27, 36, 0.15);
+      border-radius: 3px;
+    }
+  }
+}
+
+@layer components {
+  /* Skeleton base */
+  .skeleton {
+    @apply animate-pulse bg-brand-charcoal/10 rounded-2xl;
+  }
+
+  /* Safe area padding for mobile */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar utility for horizontal scroll containers */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
