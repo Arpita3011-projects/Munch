@@ -41,8 +41,7 @@ export default function LoginPage() {
    * using google-auth-library (see server/src/services/authService.js).
    *
    * Example production flow:
-   *   import { googleLogout, useGoogleLogin } from '@react-oauth/google';
-   *   // Obtain credential then:
+   *      *   // Obtain credential then:
    *   await loginWithGoogle({ idToken: credential, email, name });
    */
   const handleGoogleLogin = async () => {

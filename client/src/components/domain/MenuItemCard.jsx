@@ -5,27 +5,31 @@ import Badge from '../ui/Badge';
  * Reusable menu item card.
  *
  * Displays the item image, name, description, price, tags, and
- * UI-only favourite and add-to-cart buttons (no business logic).
+ * functional favourite heart button (wired via onToggleFavorite prop).
+ * Add-to-cart button navigates to item detail page.
  *
  * @param {object} item - Menu item object from the API
- * @param {string} item._id - Item ID
- * @param {string} item.name - Item name
- * @param {string} item.description - Item description
- * @param {number} item.price - Item price
- * @param {string} item.category - Item category
- * @param {string[]} item.tags - Item tags
- * @param {string} item.image - Image URL
+ * @param {boolean} isFavorite - Whether the item is favorited
+ * @param {function} onToggleFavorite - Callback when heart is clicked
  */
-export default function MenuItemCard({ item }) {
+export default function MenuItemCard({ item, isFavorite = false, onToggleFavorite }) {
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   }).format(item.price);
 
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(item._id);
+    }
+  };
+
   return (
     <Link
       to={`/item/${item._id}`}
-      className="group block bg-white rounded-2xl shadow-warm overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
+      className="group block bg-white rounded-2xl shadow-warm overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
       aria-label={`View ${item.name} — ${formattedPrice}`}
     >
       {/* Image container with aspect-ratio to prevent layout shift */}
@@ -34,24 +38,30 @@ export default function MenuItemCard({ item }) {
           src={item.image}
           alt={item.name}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = `https://placehold.co/400x300/F5A623/FFF8F0?text=${encodeURIComponent(item.name.charAt(0))}`;
           }}
         />
-        {/* Favourite heart button — UI only */}
+        {/* Favourite heart button */}
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            // Favourite toggle — not implemented (Milestone 4)
-          }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink"
-          aria-label={`Add ${item.name} to favourites`}
+          onClick={handleFavoriteClick}
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink ${
+            isFavorite
+              ? 'bg-brand-pink/90 text-white hover:bg-brand-pink'
+              : 'bg-white/90 text-brand-charcoal/40 hover:bg-white hover:text-brand-pink'
+          }`}
+          aria-label={isFavorite ? `Remove ${item.name} from favourites` : `Add ${item.name} to favourites`}
         >
-          <svg className="w-5 h-5 text-brand-charcoal/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg
+            className="w-5 h-5"
+            fill={isFavorite ? 'currentColor' : 'none'}
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={isFavorite ? 0 : 1.5}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
         </button>
