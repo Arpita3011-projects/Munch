@@ -31,8 +31,24 @@ const getCategories = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/v1/menu/:id
+ */
+const getMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const item = await menuService.getMenuItemById(id);
+    res.json({
+      success: true,
+      data: { item },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   listMenu,
   getCategories,
+  getMenuItem,
 };
-

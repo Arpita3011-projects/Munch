@@ -95,13 +95,13 @@ export default function CheckoutPage() {
       const payload = {
         items: items.map((item) => ({
           menuItemId: item.menuItemId,
-          size: {
+size: {
             name: item.size?.name || 'Regular',
-            priceAdjustment: item.size?.priceAdjustment || 0,
+            priceAdjustment: Number(item.size?.priceAdjustment) || 0,
           },
           addOns: (item.addOns || []).map((ao) => ({
             name: ao.name,
-            price: ao.price || 0,
+            price: Number(ao.price) || 0,
           })),
           quantity: item.quantity,
         })),

@@ -1,5 +1,37 @@
 const mongoose = require('mongoose');
 
+const sizeSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    priceAdjustment: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+  },
+  { _id: false }
+);
+
+const addOnSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+  { _id: false }
+);
+
 const menuItemSchema = new mongoose.Schema(
   {
     name: {
@@ -38,6 +70,14 @@ const menuItemSchema = new mongoose.Schema(
     isAvailable: {
       type: Boolean,
       default: true,
+    },
+    sizes: {
+      type: [sizeSchema],
+      default: [{ name: 'Regular', priceAdjustment: 0 }],
+    },
+    addOns: {
+      type: [addOnSchema],
+      default: [],
     },
   },
   {

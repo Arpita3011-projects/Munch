@@ -4,6 +4,8 @@ const config = require('./config');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
 const menuRouter = require('./routes/menu');
+const favoritesRouter = require('./routes/favorites');
+const ordersRouter = require('./routes/orders');
 const errorHandler = require('./middleware/errorHandler');
 const notFoundHandler = require('./middleware/notFoundHandler');
 
@@ -20,6 +22,8 @@ app.use(express.json({ limit: '10kb' }));
 app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/menu', menuRouter);
+app.use('/api/v1/favorites', favoritesRouter);
+app.use('/api/v1/orders', ordersRouter);
 
 // Error handling
 app.use(notFoundHandler);

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { z } = require('zod');
 
 const listMenuSchema = z.object({
@@ -16,7 +17,14 @@ const listMenuSchema = z.object({
     .pipe(z.number().int().min(1, 'Limit must be at least 1').max(50, 'Limit cannot exceed 50')),
 });
 
+const menuItemIdSchema = z.object({
+  id: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: 'Invalid menu item ID',
+  }),
+});
+
 module.exports = {
   listMenuSchema,
+  menuItemIdSchema,
 };
 

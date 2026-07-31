@@ -1,13 +1,16 @@
 /**
- * Express middleware factory that validates request body against a Zod schema.
- * Attaches parsed (and transformed) body to req.body on success.
+ * Express middleware factory that validates request body, params, or query against a Zod schema.
+ * @param {object} schema - Zod schema to validate against
+ * @param {'body'|'query'|'params'} [source='body'] - Which req property to validate
+ * Attaches parsed (and transformed) values back to the same source on success.
  * Throws 400 with detailed field errors on failure.
  */
-const validate = (schema) => {
+const validate = (schema, source = 'body') => {
   return (req, _res, next) => {
-    const result = schema.safeParse(req.body);
+    const dataToValidate = req[source] || {};
+    const result = schema.safeParse(dataToValidate);
     if (!result.success) {
-      const errors = result.error.errors.map((e) => ({
+      const errors = result.error.issues.map((e) => ({
         field: e.path.join('.'),
         message: e.message,
       }));
@@ -19,8 +22,8 @@ const validate = (schema) => {
       return next(error);
     }
 
-    // Replace body with parsed (transformed) values
-    req.body = result.data;
+    // Replace source with parsed (transformed) values
+    req[source] = result.data;
     next();
   };
 };
@@ -34,7 +37,7 @@ const validateQuery = (schema) => {
   return (req, _res, next) => {
     const result = schema.safeParse(req.query);
     if (!result.success) {
-      const errors = result.error.errors.map((e) => ({
+      const errors = result.error.issues.map((e) => ({
         field: e.path.join('.'),
         message: e.message,
       }));

@@ -1,85 +1,91 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useAuth } from '../hooks/useAuth';
 import PageContainer from '../components/layout/PageContainer';
 import Badge from '../components/ui/Badge';
 import Skeleton from '../components/ui/Skeleton';
+import { CartContext } from '../context/CartContext';
+import { useReorder } from '../hooks/useReorder';
 
-/**
- * Format a date string into a human-readable form.
- */
 function formatDate(dateStr) {
   return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit',
   }).format(new Date(dateStr));
 }
 
-/**
- * Format price in USD.
- */
 function formatPrice(amount) {
   return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+    style: 'currency', currency: 'USD',
   }).format(Number(amount));
 }
 
-/**
- * Map an order status to a Badge variant.
- */
 function statusVariant(status) {
   switch (status) {
-    case 'pending':
-      return 'warning';
-    case 'confirmed':
-      return 'default';
-    case 'preparing':
-      return 'pink';
-    case 'ready':
-    case 'delivered':
-      return 'success';
-    case 'cancelled':
-      return 'default';
-    default:
-      return 'default';
+    case 'pending': return 'warning';
+    case 'confirmed': return 'default';
+    case 'preparing': return 'pink';
+    case 'ready': case 'delivered': return 'success';
+    case 'cancelled': return 'default';
+    default: return 'default';
   }
 }
 
-function OrderCard({ order }) {
+function OrderCard({ order, onReorder, reorderProcessing }) {
   const navigate = useNavigate();
 
   return (
-    <button
-      onClick={() => navigate(`/orders/${order._id}`)}
-      className="w-full text-left bg-white rounded-2xl shadow-warm p-4 hover:shadow-warm-lg transition-shadow animate-fade-in cursor-pointer"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <p className="text-sm font-display font-semibold text-brand-charcoal">
-            #{order._id.slice(-8).toUpperCase()}
-          </p>
-          <p className="text-xs text-brand-charcoal/40 mt-0.5">
-            {formatDate(order.createdAt)}
-          </p>
+    <div className="bg-white rounded-2xl shadow-warm overflow-hidden">
+      <button
+        onClick={() => navigate('/orders/' + order._id)}
+        className="w-full text-left p-4 hover:shadow-warm-lg transition-shadow animate-fade-in cursor-pointer"
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <p className="text-sm font-display font-semibold text-brand-charcoal">
+              #{order._id.slice(-8).toUpperCase()}
+            </p>
+            <p className="text-xs text-brand-charcoal/40 mt-0.5">
+              {formatDate(order.createdAt)}
+            </p>
+          </div>
+          <Badge variant={statusVariant(order.status)}>
+            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+          </Badge>
         </div>
-        <Badge variant={statusVariant(order.status)}>
-          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-        </Badge>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-brand-charcoal/60">
-          {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
-        </span>
-        <span className="text-base font-display font-bold text-brand-pink tabular-nums">
-          {formatPrice(order.total)}
-        </span>
-      </div>
-    </button>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-brand-charcoal/60">
+            {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+          </span>
+          <span className="text-base font-display font-bold text-brand-pink tabular-nums">
+            {formatPrice(order.total)}
+          </span>
+        </div>
+      </button>
+      {order.status !== 'cancelled' && (
+        <div className="px-4 pb-4">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onReorder(order); }}
+            disabled={reorderProcessing}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors min-h-[44px] bg-brand-pink/10 text-brand-pink hover:bg-brand-pink/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {reorderProcessing ? (
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+              </svg>
+            )}
+            {reorderProcessing ? 'Adding to cart...' : 'Re-order'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -106,44 +112,40 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reorderMsg, setReorderMsg] = useState(null);
+  const { addToCart } = useContext(CartContext);
+  const { reorder, reorderLoading, reorderError } = useReorder(addToCart);
 
   useEffect(() => {
     if (!isAuthenticated) {
       setLoading(false);
       return;
     }
-
     let cancelled = false;
-
     const fetchOrders = async () => {
       try {
         setLoading(true);
         setError(null);
         const res = await api.get('/orders');
-        if (!cancelled) {
-          setOrders(res.data.data.orders);
-        }
+        if (!cancelled) setOrders(res.data.data.orders);
       } catch (err) {
-        if (!cancelled) {
-          setError(
-            err.response?.data?.message || 'Failed to load orders. Please try again.'
-          );
-        }
+        if (!cancelled) setError(err.response?.data?.message || 'Failed to load orders. Please try again.');
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
-
     fetchOrders();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [isAuthenticated]);
 
-  // Not authenticated
+  const handleReorder = async (order) => {
+    const result = await reorder(order);
+    if (result && result.success) {
+      setReorderMsg(result.message);
+      setTimeout(() => setReorderMsg(null), 4000);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <PageContainer>
@@ -155,18 +157,12 @@ export default function OrdersPage() {
             </svg>
           </div>
           <p className="text-brand-charcoal/60 mb-4">Sign in to view your orders</p>
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]"
-          >
-            Sign In
-          </Link>
+          <Link to="/login" className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]">Sign In</Link>
         </div>
       </PageContainer>
     );
   }
 
-  // Loading state
   if (loading) {
     return (
       <PageContainer>
@@ -180,7 +176,6 @@ export default function OrdersPage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <PageContainer>
@@ -193,18 +188,12 @@ export default function OrdersPage() {
           </div>
           <p className="text-brand-charcoal/60 mb-1">Something went wrong</p>
           <p className="text-sm text-brand-charcoal/40 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]"
-          >
-            Try Again
-          </button>
+          <button onClick={() => window.location.reload()} className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]">Try Again</button>
         </div>
       </PageContainer>
     );
   }
 
-  // Empty state
   if (orders.length === 0) {
     return (
       <PageContainer>
@@ -217,24 +206,28 @@ export default function OrdersPage() {
           </div>
           <p className="text-brand-charcoal/60 mb-1">No orders yet</p>
           <p className="text-sm text-brand-charcoal/40 mb-4">Place your first order to see it here</p>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]"
-          >
-            Browse Menu
-          </Link>
+          <Link to="/" className="inline-flex items-center justify-center px-6 py-2.5 bg-brand-pink text-white rounded-full font-medium text-sm hover:bg-brand-pink-dark transition-colors min-h-[44px]">Browse Menu</Link>
         </div>
       </PageContainer>
     );
   }
 
-  // Orders list
   return (
     <PageContainer>
       <h1 className="text-2xl font-display font-bold text-brand-charcoal mb-6">Orders</h1>
+      {reorderMsg && (
+        <div className="bg-success/10 text-success text-sm px-4 py-3 rounded-xl mb-4" role="alert">
+          {reorderMsg}
+        </div>
+      )}
+      {reorderError && (
+        <div className="bg-error/10 text-error text-sm px-4 py-3 rounded-xl mb-4" role="alert">
+          {reorderError}
+        </div>
+      )}
       <div className="space-y-4">
         {orders.map((order) => (
-          <OrderCard key={order._id} order={order} />
+          <OrderCard key={order._id} order={order} onReorder={handleReorder} reorderProcessing={reorderLoading} />
         ))}
       </div>
     </PageContainer>
