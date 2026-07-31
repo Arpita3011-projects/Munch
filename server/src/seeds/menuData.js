@@ -10,7 +10,7 @@ const menuItems = [
     price: 6.99,
     category: 'Milkshakes',
     tags: ['popular', 'classic'],
-    image: 'https://picsum.photos/seed/milkshake1/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516360/vanilla_yoxkl9.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular (12 oz)', priceAdjustment: 0 },
@@ -29,7 +29,7 @@ const menuItems = [
     price: 7.99,
     category: 'Milkshakes',
     tags: ['popular', 'chocolate'],
-    image: 'https://picsum.photos/seed/milkshake2/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516171/chocolate_fudge_kufotv.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular (12 oz)', priceAdjustment: 0 },
@@ -48,7 +48,7 @@ const menuItems = [
     price: 7.49,
     category: 'Milkshakes',
     tags: ['seasonal', 'fruit'],
-    image: 'https://picsum.photos/seed/milkshake3/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516336/Strawberry_Dream_Milkshake_ee8n4k.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular (12 oz)', priceAdjustment: 0 },
@@ -67,7 +67,7 @@ const menuItems = [
     price: 8.49,
     category: 'Milkshakes',
     tags: ['popular', 'cookies'],
-    image: 'https://picsum.photos/seed/milkshake4/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516211/Cookies_Cream_Milkshake_akdkjz.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular (12 oz)', priceAdjustment: 0 },
@@ -86,7 +86,7 @@ const menuItems = [
     price: 8.49,
     category: 'Milkshakes',
     tags: ['signature'],
-    image: 'https://picsum.photos/seed/milkshake5/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516323/Salted_Caramel_Milkshake_s8eghs.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular (12 oz)', priceAdjustment: 0 },
@@ -107,7 +107,7 @@ const menuItems = [
     price: 9.99,
     category: 'Sundaes',
     tags: ['popular', 'chocolate', 'indulgent'],
-    image: 'https://picsum.photos/seed/sundae1/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516145/Brownie_Explosion_Sundae_bpsrrz.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -126,7 +126,7 @@ const menuItems = [
     price: 8.99,
     category: 'Sundaes',
     tags: ['fruit', 'seasonal'],
-    image: 'https://picsum.photos/seed/sundae2/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516131/Berrylicious_Sundae_tn8fvc.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -144,7 +144,7 @@ const menuItems = [
     price: 10.49,
     category: 'Sundaes',
     tags: ['classic', 'popular'],
-    image: 'https://picsum.photos/seed/sundae3/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516088/Banana_Split_Sundae_mrxged.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Regular', priceAdjustment: 0 },
@@ -162,7 +162,7 @@ const menuItems = [
     price: 9.49,
     category: 'Sundaes',
     tags: ['signature', 'nutty'],
-    image: 'https://picsum.photos/seed/sundae4/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516157/Caramel_Pecan_Sundae_gl6n6d.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -180,7 +180,7 @@ const menuItems = [
     price: 8.99,
     category: 'Sundaes',
     tags: ['refreshing', 'chocolate'],
-    image: 'https://picsum.photos/seed/sundae5/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516270/Mint_Chocolate_Chip_Sundae_tbbuvm.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -200,7 +200,7 @@ const menuItems = [
     price: 4.99,
     category: 'Ice Cream',
     tags: ['classic', 'popular'],
-    image: 'https://picsum.photos/seed/icecream1/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516348/Vanilla_Bean_Ice_Cream_tugu7w.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -219,7 +219,7 @@ const menuItems = [
     price: 5.49,
     category: 'Ice Cream',
     tags: ['chocolate', 'premium'],
-    image: 'https://picsum.photos/seed/icecream2/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516117/Belgian_Chocolate_Ice_Cream_piarol.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -238,7 +238,7 @@ const menuItems = [
     price: 5.49,
     category: 'Ice Cream',
     tags: ['vegan', 'fruit', 'refreshing'],
-    image: 'https://picsum.photos/seed/icecream3/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516255/Mango_Sorbet_xcuwqy.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -256,7 +256,7 @@ const menuItems = [
     price: 5.99,
     category: 'Ice Cream',
     tags: ['premium', 'nutty'],
-    image: 'https://picsum.photos/seed/icecream4/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516311/Pistachio_Gelato_eutzqc.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -275,7 +275,7 @@ const menuItems = [
     price: 4.99,
     category: 'Ice Cream',
     tags: ['popular', 'cookies'],
-    image: 'https://picsum.photos/seed/icecream5/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516198/Cookies_Cream_Ice_Cream_thwdhb.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Single Scoop', priceAdjustment: 0 },
@@ -296,7 +296,7 @@ const menuItems = [
     price: 6.99,
     category: 'Cookie Dough',
     tags: ['popular', 'classic'],
-    image: 'https://picsum.photos/seed/cookie1/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516186/Classic_Chocolate_Chip_Cookie_Dough_cfiq8z.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Quarter lb', priceAdjustment: 0 },
@@ -314,7 +314,7 @@ const menuItems = [
     price: 7.49,
     category: 'Cookie Dough',
     tags: ['chocolate', 'indulgent'],
-    image: 'https://picsum.photos/seed/cookie2/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516225/Double_Chocolate_Cookie_Dough_xdfrap.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Quarter lb', priceAdjustment: 0 },
@@ -332,7 +332,7 @@ const menuItems = [
     price: 7.49,
     category: 'Cookie Dough',
     tags: ['signature', 'nutty'],
-    image: 'https://picsum.photos/seed/cookie3/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516298/Peanut_Butter_Bliss_Cookie_Dough_qhba00.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Quarter lb', priceAdjustment: 0 },
@@ -352,7 +352,7 @@ const menuItems = [
     price: 5.49,
     category: 'Coffee',
     tags: ['popular', 'coffee'],
-    image: 'https://picsum.photos/seed/coffee1/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516240/Iced_Caramel_Latt_utk7z9.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Small (12 oz)', priceAdjustment: 0 },
@@ -372,7 +372,7 @@ const menuItems = [
     price: 6.49,
     category: 'Coffee',
     tags: ['popular', 'chocolate', 'coffee'],
-    image: 'https://picsum.photos/seed/coffee2/400/300',
+    image: 'https://res.cloudinary.com/snj3ihkf/image/upload/v1785516283/Mocha_Frapp%C3%A9_wjdqnn.jpg',
     isAvailable: true,
     sizes: [
       { name: 'Small (12 oz)', priceAdjustment: 0 },
