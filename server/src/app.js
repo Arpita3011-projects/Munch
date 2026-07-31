@@ -12,10 +12,23 @@ const notFoundHandler = require('./middleware/notFoundHandler');
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: config.clientUrl,
-  credentials: true,
-}));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+  process.env.CLIENT_URL,
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json({ limit: '10kb' }));
 
