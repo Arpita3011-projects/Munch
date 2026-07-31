@@ -16,43 +16,19 @@ app.use(cors({
   origin: config.clientUrl,
   credentials: true,
 }));
+
 app.use(express.json({ limit: '10kb' }));
 
-const express = require('express');
-const cors = require('cors');
-const config = require('./config');
-const healthRouter = require('./routes/health');
-const authRouter = require('./routes/auth');
-const menuRouter = require('./routes/menu');
-const favoritesRouter = require('./routes/favorites');
-const ordersRouter = require('./routes/orders');
-const errorHandler = require('./middleware/errorHandler');
-const notFoundHandler = require('./middleware/notFoundHandler');
+// Root Route (Optional)
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to the Munch API',
+    health: '/api/v1/health',
+  });
+});
 
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: config.clientUrl,
-  credentials: true,
-}));
-app.use(express.json({ limit: '10kb' }));
-
-// Routes
-app.use('/api/v1/health', healthRouter);
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/menu', menuRouter);
-app.use('/api/v1/favorites', favoritesRouter);
-app.use('/api/v1/orders', ordersRouter);
-
-// Error handling
-app.use(notFoundHandler);
-app.use(errorHandler);
-
-module.exports = app;
-
-
-// Routes
+// API Routes
 app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/menu', menuRouter);
