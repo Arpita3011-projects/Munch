@@ -50,7 +50,7 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
   const navigate = useNavigate();
   const firstItem = order.items[0];
   const firstItemImage = firstItem ? menuItemsMap[firstItem.menuItemId]?.image : null;
-  const totalItemsCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
+  const remainingItemsCount = order.items.length - 1;
 
   const statusConfig = {
     pending: {
@@ -99,16 +99,11 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
         className="p-5 cursor-pointer hover:bg-brand-cream/10 transition-colors flex-1"
       >
         {/* Top Header */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <div>
-            <span className="text-[10px] font-bold text-brand-charcoal/30 uppercase tracking-widest block">
-              Order ID
-            </span>
-            <h3 className="text-xs md:text-sm font-display font-bold text-brand-charcoal tracking-wide mt-0.5">
-              #{order._id.slice(-8).toUpperCase()}
-            </h3>
-          </div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.bg}`}>
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <h3 className="text-sm md:text-base font-display font-bold text-brand-charcoal tracking-wide truncate flex-1 pr-2">
+            {firstItem?.name || 'Order Item'} <span className="text-brand-charcoal/40 text-xs font-bold font-body ml-1.5">× {firstItem?.quantity || 1}</span>
+          </h3>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.bg} flex-shrink-0`}>
             <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
             {statusInfo.label}
           </span>
@@ -136,25 +131,25 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
 
           {/* Details */}
           <div className="flex-1 flex flex-col justify-between min-w-0">
-            <div>
-              {/* Food summary */}
-              <div className="space-y-1 mb-2">
-                {order.items.slice(0, 2).map((item, idx) => (
-                  <p key={idx} className="text-sm font-medium text-brand-charcoal/80 truncate">
-                    {item.name} <span className="text-brand-charcoal/40 text-xs font-bold font-body">× {item.quantity}</span>
-                  </p>
-                ))}
-                {order.items.length > 2 && (
-                  <p className="text-xs font-semibold text-brand-pink mt-1">
-                    +{order.items.length - 2} more item{order.items.length - 2 > 1 ? 's' : ''}
-                  </p>
-                )}
-              </div>
+            <div className="space-y-1">
+              {/* If more items exist, show: +N more items */}
+              {remainingItemsCount > 0 ? (
+                <p className="text-xs font-semibold text-brand-pink">
+                  +{remainingItemsCount} more item{remainingItemsCount > 1 ? 's' : ''}
+                </p>
+              ) : (
+                <div className="h-4" />
+              )}
+              
+              {/* Small secondary Order ID text below food summary */}
+              <p className="text-xs text-brand-charcoal/40 font-medium mt-1">
+                Order #{order._id.slice(-8).toUpperCase()}
+              </p>
             </div>
 
             <div className="flex items-baseline justify-between mt-auto pt-2">
               <span className="text-xs font-medium text-brand-charcoal/50">
-                {totalItemsCount} {totalItemsCount === 1 ? 'Item' : 'Items'} &bull; {formatOrderDate(order.createdAt)}
+                {formatOrderDate(order.createdAt)}
               </span>
               <span className="text-base font-display font-extrabold text-brand-pink tabular-nums">
                 {formatPrice(order.total)}
