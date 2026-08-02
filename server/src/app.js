@@ -16,12 +16,21 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
   process.env.CLIENT_URL,
-];
+].filter(Boolean);
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow same-origin / non-browser requests (curl, server-to-server).
+      if (!origin) {
+        return callback(null, true);
+      }
+      // Allow explicitly allowlisted origins (localhost dev, CLIENT_URL).
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      // Allow any HTTPS origin (deployed Vercel frontend, preview/custom domains).
+      if (origin.startsWith('https://')) {
         return callback(null, true);
       }
       callback(new Error("Not allowed by CORS"));
