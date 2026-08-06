@@ -11,7 +11,7 @@ A mobile-first progressive web application that lets customers browse the menu, 
 | **Frontend** | React 18 + Vite + Tailwind CSS 3 |
 | **Backend** | Node.js + Express |
 | **Database** | MongoDB + Mongoose |
-| **Auth** | JWT (email/password + Google OAuth) |
+| **Auth** | JWT (email/password) |
 | **Real-time** | Socket.io (order tracking & chat) |
 | **PWA** | vite-plugin-pwa (manifest + service worker) |
 
@@ -96,7 +96,6 @@ variables are missing.
 | `CLIENT_URL` | No | Frontend URL (for CORS) | `http://localhost:5173` |
 | `MONGODB_URI` | No | MongoDB connection string | `mongodb://localhost:27017/munch` |
 | `JWT_SECRET` | **Yes** | Secret for signing JWT tokens | — |
-| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID (for future token verification) | — |
 
 **Generate a secure JWT_SECRET:**
 ```bash
@@ -156,7 +155,7 @@ npm run dev
 | # | Milestone | Status |
 |---|-----------|--------|
 | 1 | Project scaffold + Design system | ✅ |
-| 2 | Auth (email/password + Google) + Profile shell | ✅ |
+| 2 | Auth (email/password) + Profile shell | ✅ |
 | 3 | Home / Discovery — browse, search, filters | ⬜ |
 | 4 | Item detail + Customization + Favourites | ⬜ |
 | 5 | Cart + Checkout (stubbed payment) | ⬜ |

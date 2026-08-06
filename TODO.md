@@ -1,28 +1,24 @@
-# Orders Feature Implementation
+# Munch Project — Implementation Log
 
-## Backend Steps
-- [x] 1. Add `getOrdersByUser(userId)` method to `orderService.js`
-- [x] 2. Add `getOrders` controller to `orderController.js`
-- [x] 3. Add `GET /` route to `orders.js`
+## Orders Feature
+- [x] Backend: getOrdersByUser, getOrders controller, GET / route
+- [x] Frontend: OrdersPage, OrderDetailPage
+- [x] Re-order feature (useReorder hook, buttons on Orders + OrderDetail)
+- [x] Build passes with 0 errors
 
-## Frontend Steps
-- [x] 4. Implement `OrdersPage.jsx` — list all user orders
-- [x] 5. Implement `OrderDetailPage.jsx` — full order details
+## Customer Profile & Address Management
+- [x] Backend: Address model/schema/service/controller/routes (CRUD, ownership, single-default)
+- [x] Profile module: profileSchemas, profileService, profileController, routes/profile, mounted in app.js
+- [x] User model: added `avatar` field; routes/addresses.js: added PATCH /:id/default alias
+- [x] Frontend: useProfile hook, updateUser in AuthContext, rebuilt ProfilePage (view/edit + avatar upload + inline addresses)
+- [x] Checkout uses saved addresses (default auto-selected, add-address inline, empty state)
+- [x] Verification: node --check passes, npm run build passes
 
-## Re-order Feature (P1)
-- [x] 1. Create `useReorder.js` hook — fetches menu data, deduplicates, preserves quantity/size/add-ons, skips unavailable items
-- [x] 2. Add Re-order button to `OrdersPage.jsx` — shown for every order except cancelled, with loading/success/error states
-- [x] 3. Add Re-order button to `OrderDetailPage.jsx` — navigates to `/cart` on success after 1.5s delay
-- [x] 4. Build passes with 0 errors and 0 warnings (verified)
-
-## Verification
-- [x] 6. Verify checkout creates an order
-- [x] 7. Build passes with no errors
-- [ ] 8. Verify clicking an order opens detail page (manual)
-- [ ] 9. Verify refreshing detail page still works (manual)
-- [ ] 10. Verify no console errors or React warnings (manual)
-- [ ] 11. Verify Re-order button works on OrdersPage (manual)
-- [ ] 12. Verify Re-order button works on OrderDetailPage (manual)
-- [ ] 13. Verify unavailable items are skipped gracefully (manual)
-- [ ] 14. Verify cancelled order does not show Re-order button (manual)
-
+## Google Login Cleanup (final)
+- [x] Scanned entire project for google/Google/GOOGLE/googleId/idToken/GoogleOAuth/GoogleLogin/GoogleButton
+- [x] Result: NO Google Login or OAuth code exists anywhere in the project
+- [x] Only matches: `workbox-google-analytics` (transitive dep of vite-plugin-pwa) and `fonts.googleapis.com` (Google Fonts CDN) — both unrelated to Google Login
+- [x] No Google routes/controllers/services, no googleId field, no GOOGLE_CLIENT_ID env var, no Google buttons/hooks/SDK
+- [x] Email/Password is the only auth method; JWT logic, roles, and all APIs unchanged
+- [x] Verification: node --check passes (SERVER_SYNTAX_ALL_OK), npm run build passes (0 errors)
+</content>

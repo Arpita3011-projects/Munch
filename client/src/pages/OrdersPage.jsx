@@ -4,8 +4,12 @@ import api from '../lib/axios';
 import { useAuth } from '../hooks/useAuth';
 import PageContainer from '../components/layout/PageContainer';
 import Skeleton from '../components/ui/Skeleton';
+import Button from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
 import { CartContext } from '../context/CartContext';
+import { paymentLabel } from '../lib/payment';
 import { useReorder } from '../hooks/useReorder';
+import { useCancelOrder } from '../hooks/useCancelOrder';
 
 function formatOrderDate(dateStr) {
   const date = new Date(dateStr);
@@ -46,11 +50,16 @@ const FoodPlaceholder = () => (
   </div>
 );
 
-function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
+function OrderCard({ order, onReorder, reorderProcessing, onCancelClick, cancelProcessing, menuItemsMap }) {
   const navigate = useNavigate();
   const firstItem = order.items[0];
-  const firstItemImage = firstItem ? menuItemsMap[firstItem.menuItemId]?.image : null;
+  const firstMenuItem = firstItem ? menuItemsMap[firstItem.menuItemId] : null;
+  
+  const firstItemName = firstMenuItem?.name || firstItem?.name || 'Order Item';
+  const firstItemImage = firstMenuItem?.image || null;
+  
   const remainingItemsCount = order.items.length - 1;
+  const cancellable = order.status === 'pending' || order.status === 'confirmed';
 
   const statusConfig = {
     pending: {
@@ -80,8 +89,8 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
     },
     cancelled: {
       label: 'Cancelled',
-      bg: 'bg-rose-50 border border-rose-200/50 text-rose-700',
-      dot: 'bg-rose-500',
+      bg: 'bg-brand-charcoal/10 border border-brand-charcoal/15 text-brand-charcoal/80',
+      dot: 'bg-brand-charcoal/50',
     },
   };
 
@@ -101,7 +110,7 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
         {/* Top Header */}
         <div className="flex items-center justify-between gap-2 mb-4">
           <h3 className="text-sm md:text-base font-display font-bold text-brand-charcoal tracking-wide truncate flex-1 pr-2">
-            {firstItem?.name || 'Order Item'} <span className="text-brand-charcoal/40 text-xs font-bold font-body ml-1.5">× {firstItem?.quantity || 1}</span>
+            {firstItemName} <span className="text-brand-charcoal/40 text-xs font-bold font-body ml-1.5">× {firstItem?.quantity || 1}</span>
           </h3>
           <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.bg} flex-shrink-0`}>
             <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
@@ -116,7 +125,7 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
             {firstItemImage ? (
               <img
                 src={firstItemImage}
-                alt={firstItem?.name || 'Food item'}
+                alt={firstItemName}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => {
                   e.target.style.display = 'none';
@@ -145,6 +154,13 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
               <p className="text-xs text-brand-charcoal/40 font-medium mt-1">
                 Order #{order._id.slice(-8).toUpperCase()}
               </p>
+              {/* Payment method */}
+              <p className="text-[11px] text-brand-charcoal/35 font-medium mt-1 inline-flex items-center gap-1">
+                <svg className="w-3 h-3 text-brand-charcoal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                {paymentLabel(order.paymentMethod)}
+              </p>
             </div>
 
             <div className="flex items-baseline justify-between mt-auto pt-2">
@@ -160,31 +176,49 @@ function OrderCard({ order, onReorder, reorderProcessing, menuItemsMap }) {
       </div>
 
       {/* Buttons Footer */}
-      <div className="px-5 pb-5 pt-3 bg-brand-cream/10 border-t border-brand-cream-2/30 flex gap-3 mt-auto">
+      <div className="px-5 pb-5 pt-3 bg-brand-cream/10 border-t border-brand-cream-2/30 flex flex-wrap gap-3 mt-auto">
         <button
           onClick={() => navigate('/orders/' + order._id)}
           className="flex-1 flex items-center justify-center px-4 py-2 rounded-full text-xs font-semibold border border-brand-charcoal/10 text-brand-charcoal/70 hover:bg-brand-charcoal/5 hover:text-brand-charcoal transition-all min-h-[40px] cursor-pointer"
         >
           View Details
         </button>
-        {order.status !== 'cancelled' && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onReorder(order); }}
+          disabled={reorderProcessing}
+          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all min-h-[40px] bg-brand-pink text-white hover:bg-brand-pink-dark hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {reorderProcessing ? (
+            <svg className="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+            </svg>
+          )}
+          {reorderProcessing ? 'Adding...' : 'Re-order'}
+        </button>
+        {cancellable && (
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); onReorder(order); }}
-            disabled={reorderProcessing}
-            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all min-h-[40px] bg-brand-pink text-white hover:bg-brand-pink-dark hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); onCancelClick(order); }}
+            disabled={cancelProcessing}
+            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all min-h-[40px] bg-error text-white hover:bg-error/90 hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {reorderProcessing ? (
+            {cancelProcessing ? (
               <svg className="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
             ) : (
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             )}
-            {reorderProcessing ? 'Adding...' : 'Re-order'}
+            {cancelProcessing ? 'Cancelling...' : 'Cancel Order'}
           </button>
         )}
       </div>
@@ -228,8 +262,11 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reorderMsg, setReorderMsg] = useState(null);
+  const [cancelMsg, setCancelMsg] = useState(null);
+  const [orderToCancel, setOrderToCancel] = useState(null);
   const { addToCart } = useContext(CartContext);
   const { reorder, reorderLoading, reorderError } = useReorder(addToCart);
+  const { cancelOrder, cancelLoading, cancelError, setCancelError } = useCancelOrder();
 
   // Fetch menu items to map images
   useEffect(() => {
@@ -244,8 +281,8 @@ export default function OrdersPage() {
           });
           setMenuItemsMap(map);
         }
-      } catch (err) {
-        console.error('Failed to load menu items for images', err);
+} catch (err) {
+        // Silently ignore — the order cards render without item images.
       }
     };
     fetchMenu();
@@ -279,6 +316,32 @@ export default function OrdersPage() {
     if (result && result.success) {
       setReorderMsg(result.message);
       setTimeout(() => setReorderMsg(null), 4000);
+    }
+  };
+
+  const handleCancelClick = (order) => {
+    setCancelError(null);
+    setOrderToCancel(order);
+  };
+
+  const handleCloseCancelModal = () => {
+    if (cancelLoading) return;
+    setOrderToCancel(null);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!orderToCancel) return;
+    const result = await cancelOrder(orderToCancel._id);
+    if (result && result.success) {
+      // Update status badge immediately and remove the Cancel button.
+      setOrders((prevOrders) =>
+        prevOrders.map((o) =>
+          o._id === orderToCancel._id ? { ...o, ...result.order, status: 'cancelled' } : o
+        )
+      );
+      setCancelMsg(result.message);
+      setTimeout(() => setCancelMsg(null), 4000);
+      setOrderToCancel(null);
     }
   };
 
@@ -366,6 +429,14 @@ export default function OrdersPage() {
           <span className="font-medium">{reorderMsg}</span>
         </div>
       )}
+      {cancelMsg && (
+        <div className="bg-emerald-50 border border-emerald-200/50 text-emerald-800 text-sm px-4 py-3 rounded-2xl mb-6 flex items-center gap-2 animate-fade-in" role="alert">
+          <svg className="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="font-medium">{cancelMsg}</span>
+        </div>
+      )}
       {reorderError && (
         <div className="bg-rose-50 border border-rose-200/50 text-rose-800 text-sm px-4 py-3 rounded-2xl mb-6 flex items-center gap-2 animate-fade-in" role="alert">
           <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -382,10 +453,68 @@ export default function OrdersPage() {
             order={order} 
             onReorder={handleReorder} 
             reorderProcessing={reorderLoading} 
+            onCancelClick={handleCancelClick}
+            cancelProcessing={cancelLoading}
             menuItemsMap={menuItemsMap}
           />
         ))}
       </div>
+
+      {/* Cancel Order Confirmation Modal */}
+      <Modal
+        isOpen={!!orderToCancel}
+        onClose={handleCloseCancelModal}
+        title="Cancel Order"
+      >
+        <div className="space-y-5">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-base font-display font-bold text-brand-charcoal mb-1">
+                Cancel this order?
+              </h3>
+              <p className="text-sm text-brand-charcoal/60">
+                This action cannot be undone.
+              </p>
+            </div>
+          </div>
+
+          {cancelError && (
+            <div className="bg-rose-50 border border-rose-200/50 text-rose-800 text-sm px-4 py-3 rounded-2xl flex items-center gap-2" role="alert">
+              <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span className="font-medium">{cancelError}</span>
+            </div>
+          )}
+
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+            <Button
+              variant="outline"
+              size="md"
+              className="flex-1 rounded-full"
+              onClick={handleCloseCancelModal}
+              disabled={cancelLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              className="flex-1 rounded-full !bg-error hover:!bg-error/90"
+              loading={cancelLoading}
+              onClick={handleConfirmCancel}
+              disabled={!orderToCancel}
+            >
+              Yes, Cancel Order
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </PageContainer>
   );
 }

@@ -6,6 +6,10 @@ const authRouter = require('./routes/auth');
 const menuRouter = require('./routes/menu');
 const favoritesRouter = require('./routes/favorites');
 const ordersRouter = require('./routes/orders');
+const addressesRouter = require('./routes/addresses');
+const profileRouter = require('./routes/profile');
+const reviewsRouter = require('./routes/reviews');
+const adminRouter = require('./routes/admin');
 const errorHandler = require('./middleware/errorHandler');
 const notFoundHandler = require('./middleware/notFoundHandler');
 
@@ -39,7 +43,7 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '6mb' }));
 
 // Root Route (Optional)
 app.get('/', (req, res) => {
@@ -56,6 +60,10 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/menu', menuRouter);
 app.use('/api/v1/favorites', favoritesRouter);
 app.use('/api/v1/orders', ordersRouter);
+app.use('/api/v1/addresses', addressesRouter);
+app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/reviews', reviewsRouter);
+app.use('/api/v1/admin', adminRouter);
 
 // Error handling
 app.use(notFoundHandler);

@@ -10,6 +10,7 @@
 
   body {
     @apply min-h-screen bg-brand-cream text-brand-charcoal font-body antialiased;
+    overflow-x: clip;
   }
 
   /* Tabular nums for prices */

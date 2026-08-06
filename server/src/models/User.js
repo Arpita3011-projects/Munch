@@ -22,14 +22,15 @@ const userSchema = new mongoose.Schema(
     },
     authProvider: {
       type: String,
-      enum: ['local', 'google'],
+      enum: ['local'],
       default: 'local',
     },
-    googleId: {
+phone: {
       type: String,
       default: null,
+      trim: true,
     },
-    phone: {
+    avatar: {
       type: String,
       default: null,
       trim: true,
@@ -61,7 +62,6 @@ const userSchema = new mongoose.Schema(
 // Note: email is already indexed via `unique: true` in the schema definition.
 // An additional schema.index({ email: 1 }) would create a duplicate index.
 
-// Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('passwordHash') || !this.passwordHash) {
     return next();
@@ -71,7 +71,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// Instance method: compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.passwordHash) return false;
   return bcrypt.compare(candidatePassword, this.passwordHash);

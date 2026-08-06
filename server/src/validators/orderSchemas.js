@@ -35,18 +35,22 @@ const createOrderSchema = z.object({
     .max(50, 'Order cannot exceed 50 items'),
   address: z
     .object({
+      fullName: z.string().trim().optional().default(''),
+      phone: z.string().trim().optional().default(''),
       line1: z.string().trim().optional().default(''),
       line2: z.string().trim().optional().default(''),
+      landmark: z.string().trim().optional().default(''),
       city: z.string().trim().optional().default(''),
       state: z.string().trim().optional().default(''),
       zip: z.string().trim().optional().default(''),
+      type: z.enum(['home', 'work', 'other']).optional().default('home'),
     })
     .optional()
     .default({}),
   paymentMethod: z
-    .enum(['card', 'cash', 'mock'])
+    .enum(['Cash on Delivery', 'UPI', 'Card'])
     .optional()
-    .default('mock'),
+    .default('Cash on Delivery'),
 });
 
 const orderParamsSchema = z.object({

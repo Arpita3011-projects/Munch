@@ -6,28 +6,11 @@ export const AuthContext = createContext(null);
 /**
  * Authentication provider.
  *
- * ⚠️ MVP TRADEOFFS
- *
- * 1. JWT Storage:
- *    JWT is stored in localStorage for simplicity. This is acceptable for MVP
- *    because it enables easy debugging, tab-synced login state, and persistence
- *    across page refreshes. The production-hardened approach would use httpOnly
- *    cookies + a refresh token rotation scheme to mitigate XSS risk. For MVP,
- *    we document this tradeoff and ensure the token is cleared on logout.
- *
- * 2. Google ID Token Verification:
- *    The backend service (authService.googleAuth) accepts an idToken payload
- *    from the client. For MVP, server-side verification using google-auth-library
- *    is intentionally deferred. The client sends a pre-verified payload as the
- *    idToken field, and the server trusts it.
- *
- *    ⚠️ Production requirement:
- *    Before production launch, the following MUST be implemented:
- *    - Frontend: Use @react-oauth/google to obtain a real Google credential.
- *    - Backend: Install google-auth-library and verify the token server-side
- *      using OAuth2Client.verifyIdToken() in _verifyGoogleToken().
- *
- *    See server/src/services/authService.js for implementation details.
+ * JWT is stored in localStorage for simplicity. This is acceptable for MVP
+ * because it enables easy debugging, tab-synced login state, and persistence
+ * across page refreshes. The production-hardened approach would use httpOnly
+ * cookies + a refresh token rotation scheme to mitigate XSS risk. For MVP,
+ * we document this tradeoff and ensure the token is cleared on logout.
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -81,28 +64,16 @@ export function AuthProvider({ children }) {
     return userData;
   }, []);
 
-  /**
-   * Google authentication.
-   *
-   * MVP note: This sends googleId, email, and name directly to the server.
-   * In production, the client should:
-   *   1. Use Google Identity Services to get a credential (ID token)
-   *   2. Send the credential (not user data) to POST /api/v1/auth/google
-   *   3. The server verifies the token server-side using google-auth-library
-   * See server/src/services/authService.js for more details.
-   */
-  const loginWithGoogle = useCallback(async (googleData) => {
-    setError(null);
-    const res = await api.post('/auth/google', googleData);
-    const { user: userData, token } = res.data.data;
-    localStorage.setItem('munch_token', token);
-    setUser(userData);
-    return userData;
-  }, []);
-
   const logout = useCallback(() => {
     localStorage.removeItem('munch_token');
     setUser(null);
+    setError(null);
+  }, []);
+
+  // Update the user in state (e.g. after a profile edit) so the header,
+  // nav, and any other consumers reflect the latest profile immediately.
+  const updateUser = useCallback((updatedUser) => {
+    setUser(updatedUser);
     setError(null);
   }, []);
 
@@ -118,11 +89,11 @@ export function AuthProvider({ children }) {
       isAuthenticated: !!user,
       login,
       register,
-      loginWithGoogle,
       logout,
+      updateUser,
       clearError,
     }),
-    [user, loading, error, login, register, loginWithGoogle, logout, clearError]
+    [user, loading, error, login, register, logout, updateUser, clearError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

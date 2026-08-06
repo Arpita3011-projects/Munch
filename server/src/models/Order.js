@@ -103,16 +103,20 @@ const orderSchema = new mongoose.Schema(
       default: [],
     },
     addressSnapshot: {
+      fullName: { type: String, default: '' },
+      phone: { type: String, default: '' },
       line1: { type: String, default: '' },
       line2: { type: String, default: '' },
+      landmark: { type: String, default: '' },
       city: { type: String, default: '' },
       state: { type: String, default: '' },
       zip: { type: String, default: '' },
+      type: { type: String, default: 'home' },
     },
     paymentMethod: {
       type: String,
-      enum: ['card', 'cash', 'mock'],
-      default: 'mock',
+      enum: ['Cash on Delivery', 'UPI', 'Card'],
+      default: 'Cash on Delivery',
     },
   },
   {

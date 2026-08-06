@@ -48,7 +48,6 @@ class OrderService {
       throw error;
     }
 
-    // Build a lookup map
     const menuItemMap = {};
     for (const mi of menuItems) {
       menuItemMap[mi._id.toString()] = mi;
@@ -95,12 +94,10 @@ class OrderService {
       });
     }
 
-    // Calculate tax and total
     const deliveryFeeCents = DELIVERY_FEE_CENTS;
     const taxCents = Math.round(subtotalCents * TAX_RATE);
     const totalCents = subtotalCents + deliveryFeeCents + taxCents;
 
-    // Create the order
     const order = await Order.create({
       user: userId,
       items: orderItems,
@@ -111,13 +108,17 @@ class OrderService {
       status: 'pending',
       statusHistory: [{ status: 'pending', timestamp: new Date() }],
       addressSnapshot: {
+        fullName: address?.fullName || '',
+        phone: address?.phone || '',
         line1: address?.line1 || '',
         line2: address?.line2 || '',
+        landmark: address?.landmark || '',
         city: address?.city || '',
         state: address?.state || '',
         zip: address?.zip || '',
+        type: address?.type || 'home',
       },
-      paymentMethod: paymentMethod || 'mock',
+      paymentMethod: paymentMethod || 'Cash on Delivery',
     });
 
     return order;
@@ -154,8 +155,47 @@ class OrderService {
 
     return order;
   }
+
+  /**
+   * Cancel an order if its current status allows it.
+   *
+   * Only orders in 'pending' (Placed) or 'confirmed' status can be cancelled.
+   * Appends a 'cancelled' entry to statusHistory.
+   */
+  async cancelOrder(orderId, userId) {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      const error = new Error('Order not found');
+      error.statusCode = 404;
+      error.code = 'ORDER_NOT_FOUND';
+      throw error;
+    }
+
+    // Ownership validation — a user can only cancel their own orders
+    if (order.user.toString() !== userId.toString()) {
+      const error = new Error('You do not have permission to cancel this order');
+      error.statusCode = 403;
+      error.code = 'FORBIDDEN';
+      throw error;
+    }
+
+    // Status validation — cancellation only allowed while order is placed/confirmed
+    const cancellableStatuses = ['pending', 'confirmed'];
+    if (!cancellableStatuses.includes(order.status)) {
+      const error = new Error('This order can no longer be cancelled');
+      error.statusCode = 409;
+      error.code = 'ORDER_NOT_CANCELLABLE';
+      throw error;
+    }
+
+    order.status = 'cancelled';
+    order.statusHistory.push({ status: 'cancelled', timestamp: new Date() });
+    await order.save();
+
+    return order;
+  }
 }
 
 module.exports = new OrderService();
-// Export helpers for use in controllers/responses
 module.exports.centsToDollars = centsToDollars;

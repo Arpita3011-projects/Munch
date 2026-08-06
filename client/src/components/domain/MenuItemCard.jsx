@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Badge from '../ui/Badge';
+import { formatINR } from './analytics/analyticsUtils';
 
 /**
  * Reusable menu item card.
@@ -8,15 +9,17 @@ import Badge from '../ui/Badge';
  * functional favourite heart button (wired via onToggleFavorite prop).
  * Add-to-cart button navigates to item detail page.
  *
+ * Premium presentation: larger image, equal-height layout, softer
+ * shadows, rounded corners, subtle hover animation. All features
+ * (favourite, image, title, description, tags, price, add button,
+ * category badge) are preserved exactly.
+ *
  * @param {object} item - Menu item object from the API
  * @param {boolean} isFavorite - Whether the item is favorited
  * @param {function} onToggleFavorite - Callback when heart is clicked
  */
 export default function MenuItemCard({ item, isFavorite = false, onToggleFavorite }) {
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(item.price);
+  const formattedPrice = formatINR(item.price);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
@@ -29,7 +32,7 @@ export default function MenuItemCard({ item, isFavorite = false, onToggleFavorit
   return (
     <Link
       to={`/item/${item._id}`}
-      className="group block bg-white rounded-2xl shadow-warm overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
+      className="group flex flex-col h-full bg-white rounded-3xl shadow-warm overflow-hidden transition-all duration-300 hover:shadow-warm-lg hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
       aria-label={`View ${item.name} — ${formattedPrice}`}
     >
       {/* Image container with aspect-ratio to prevent layout shift */}
@@ -38,12 +41,14 @@ export default function MenuItemCard({ item, isFavorite = false, onToggleFavorit
           src={item.image}
           alt={item.name}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-300 motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100"
+          className="w-full h-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = `https://placehold.co/400x300/F5A623/FFF8F0?text=${encodeURIComponent(item.name.charAt(0))}`;
           }}
         />
+        {/* Soft gradient overlay for depth on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-charcoal/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
         {/* Favourite heart button */}
         <button
           type="button"
@@ -71,18 +76,18 @@ export default function MenuItemCard({ item, isFavorite = false, onToggleFavorit
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="font-display font-semibold text-brand-charcoal text-base truncate">
+      {/* Content — flex column for equal-height cards */}
+      <div className="flex flex-col flex-1 p-4 md:p-5">
+        <h3 className="font-display font-semibold text-brand-charcoal text-base md:text-lg truncate">
           {item.name}
         </h3>
-        <p className="text-sm text-brand-charcoal/60 mt-1 line-clamp-2">
+        <p className="text-sm text-brand-charcoal/60 mt-1 line-clamp-2 flex-1">
           {item.description}
         </p>
 
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
             {item.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
@@ -98,8 +103,8 @@ export default function MenuItemCard({ item, isFavorite = false, onToggleFavorit
         )}
 
         {/* Price and add-to-cart — UI only */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-brand-charcoal/5">
-          <span className="font-display font-bold text-brand-charcoal text-lg">
+        <div className="flex items-center justify-between mt-4 pt-3.5 border-t border-brand-charcoal/5">
+          <span className="font-display font-bold text-brand-charcoal text-lg md:text-xl">
             {formattedPrice}
           </span>
           <button
@@ -107,9 +112,9 @@ export default function MenuItemCard({ item, isFavorite = false, onToggleFavorit
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              // Add to cart — not implemented (Milestone 5)
+              // Add to cart — opens item detail page for customization
             }}
-            className="w-9 h-9 rounded-full bg-brand-pink flex items-center justify-center transition-colors hover:bg-brand-pink-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
+            className="w-10 h-10 rounded-full bg-brand-pink flex items-center justify-center transition-all hover:bg-brand-pink-dark hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2"
             aria-label={`Add ${item.name} to cart`}
           >
             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import Button from '../components/ui/Button';
+import { formatINR } from '../components/domain/analytics/analyticsUtils';
 import { CartContext } from '../context/CartContext';
 
 export default function CartPage() {
@@ -15,10 +16,7 @@ export default function CartPage() {
     }, 0);
   }, [items]);
 
-  const formattedSubtotal = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(subtotal);
+  const formattedSubtotal = formatINR(subtotal);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -59,10 +57,7 @@ export default function CartPage() {
           const sizeAdjustment = item.size?.priceAdjustment || 0;
           const addOnsTotal = (item.addOns || []).reduce((sum, addOn) => sum + (addOn.price || 0), 0);
           const itemTotal = (item.basePrice + sizeAdjustment + addOnsTotal) * item.quantity;
-          const formattedItemTotal = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-          }).format(itemTotal);
+          const formattedItemTotal = formatINR(itemTotal);
 
           return (
             <div key={item.uniqueId} className="bg-white rounded-2xl p-4 shadow-warm">

@@ -6,7 +6,6 @@ const config = {
   jwtSecret: process.env.JWT_SECRET,
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   nodeEnv: process.env.NODE_ENV || 'development',
-  googleClientId: process.env.GOOGLE_CLIENT_ID || null,
 };
 
 // Fail fast: JWT_SECRET is required for authentication.

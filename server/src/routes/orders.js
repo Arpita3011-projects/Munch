@@ -14,4 +14,7 @@ router.get('/', authenticate, orderController.getOrders);
 // GET /api/v1/orders/:id — Get order by ID (protected, ownership validated)
 router.get('/:id', authenticate, validate(orderParamsSchema, 'params'), orderController.getOrder);
 
+// POST /api/v1/orders/:id/cancel — Cancel an order (protected, ownership + status validated)
+router.post('/:id/cancel', authenticate, validate(orderParamsSchema, 'params'), orderController.cancelOrder);
+
 module.exports = router;

@@ -41,26 +41,6 @@ const login = async (req, res, next) => {
 };
 
 /**
- * POST /api/v1/auth/google
- */
-const googleAuth = async (req, res, next) => {
-  try {
-    const { idToken, email, name } = req.body;
-    const result = await authService.googleAuth({ idToken, email, name });
-    res.json({
-      success: true,
-      message: 'Google authentication successful',
-      data: {
-        user: result.user,
-        token: result.token,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
  * GET /api/v1/auth/me (protected)
  */
 const getMe = async (req, res, next) => {
@@ -78,6 +58,5 @@ const getMe = async (req, res, next) => {
 module.exports = {
   register,
   login,
-  googleAuth,
   getMe,
 };

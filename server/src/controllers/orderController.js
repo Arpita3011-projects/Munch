@@ -30,8 +30,18 @@ function formatOrder(order) {
     total: (doc.totalCents / 100).toFixed(2),
     status: doc.status,
     statusHistory: doc.statusHistory,
-    addressSnapshot: doc.addressSnapshot,
-    paymentMethod: doc.paymentMethod,
+      addressSnapshot: {
+        fullName: doc.addressSnapshot?.fullName || '',
+        phone: doc.addressSnapshot?.phone || '',
+        line1: doc.addressSnapshot?.line1 || '',
+        line2: doc.addressSnapshot?.line2 || '',
+        landmark: doc.addressSnapshot?.landmark || '',
+        city: doc.addressSnapshot?.city || '',
+        state: doc.addressSnapshot?.state || '',
+        zip: doc.addressSnapshot?.zip || '',
+        type: doc.addressSnapshot?.type || 'home',
+      },
+      paymentMethod: doc.paymentMethod,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   };
@@ -95,8 +105,27 @@ const getOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/v1/orders/:id/cancel
+ * Cancel an order (ownership validated, status rules enforced server-side).
+ */
+const cancelOrder = async (req, res, next) => {
+  try {
+    const order = await orderService.cancelOrder(req.params.id, req.user._id);
+
+    res.json({
+      success: true,
+      message: 'Order cancelled successfully',
+      data: { order: formatOrder(order) },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createOrder,
   getOrders,
   getOrder,
+  cancelOrder,
 };

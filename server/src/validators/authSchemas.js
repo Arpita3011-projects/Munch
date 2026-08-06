@@ -28,27 +28,7 @@ const loginSchema = z.object({
     .min(1, 'Password is required'),
 });
 
-const googleAuthSchema = z.object({
-  idToken: z
-    .union([
-      z.string().min(1, 'ID token cannot be empty'),
-      z.object({
-        sub: z.string().min(1),
-        email: z.string().email(),
-        name: z.string().optional(),
-      }),
-    ])
-    .describe('Google ID token (string) or pre-verified payload object (MVP)'),
-  email: z
-    .string({ required_error: 'Email is required' })
-    .trim()
-    .email('Please provide a valid email address')
-    .transform((e) => e.toLowerCase()),
-  name: z.string().trim().optional(),
-});
-
 module.exports = {
   registerSchema,
   loginSchema,
-  googleAuthSchema,
 };
