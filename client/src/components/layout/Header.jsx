@@ -7,7 +7,6 @@ import { useAuth } from '../../hooks/useAuth';
  */
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
-  { to: '/menu', label: 'Menu' },
   { to: '/favorites', label: 'Favorites' },
 ];
 
@@ -23,8 +22,8 @@ const CartIcon = ({ className = 'w-5 h-5' }) => (
 /**
  * App header with auth-aware navigation.
  *
- * Guests:  Home · Menu · Favorites            (Login) (Sign Up)
- * Users:   Home · Menu · Favorites · Orders   (Profile) (Logout)
+ * Guests:  Home · Favorites            (Login) (Sign Up)
+ * Users:   Home · Favorites · Orders   (Profile) (Logout)
  * Admins:  + Admin Dashboard link to /admin
  *
  * Mobile uses a hamburger menu that includes the same links plus the

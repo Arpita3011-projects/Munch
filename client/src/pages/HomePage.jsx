@@ -1,5 +1,4 @@
-import { useMemo, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 import MenuItemCard from '../components/domain/MenuItemCard';
 import Skeleton from '../components/ui/Skeleton';
 import { useMenu } from '../hooks/useMenu';
@@ -29,24 +28,8 @@ export default function HomePage() {
     search, selectedCategory, changeSearch, changeCategory, changePage,
   } = useMenu();
 
-  const { isFavorite, toggleFavorite } = useFavorites();
+const { isFavorite, toggleFavorite } = useFavorites();
   const { user, isAuthenticated } = useAuth();
-  const location = useLocation();
-  const menuRef = useRef(null);
-
-  // When the user opens /menu, smooth-scroll to the start of the menu
-  // section (search + categories + grid) so the hero scrolls out of view.
-  // "/" (and all other routes) are unaffected.
-  useEffect(() => {
-    if (location.pathname !== '/menu') return;
-    const target = menuRef.current;
-    if (!target) return;
-    // Defer so the layout is fully painted before scrolling.
-    const id = window.requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    return () => window.cancelAnimationFrame(id);
-  }, [location.pathname]);
 
   // Greeting based on time of day
   const greeting = useMemo(() => {
@@ -166,8 +149,8 @@ className="w-full h-full object-cover"
           </div>
         </section>
 
-        {/* ══════════ 2 · SEARCH BAR (nearly full width, rounded-full) ══════════ */}
-        <div ref={menuRef} className="relative mb-2">
+{/* ══════════ 2 · SEARCH BAR (nearly full width, rounded-full) ══════════ */}
+        <div className="relative mb-2">
           <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
             <svg className="w-5 h-5 text-brand-charcoal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
