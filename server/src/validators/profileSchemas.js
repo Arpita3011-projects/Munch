@@ -37,7 +37,8 @@ const updateProfileSchema = z.object({
     .string()
     .trim()
     .max(2000000, 'Avatar image is too large')
-    .optional(),
+    .optional()
+    .nullable(),
 });
 
 module.exports = {
