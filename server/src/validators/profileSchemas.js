@@ -1,6 +1,17 @@
 const { z } = require('zod');
 
 /**
+ * Indian mobile number regex.
+ *
+ * Accepts either of these canonical formats:
+ *   9876543210
+ *   +919876543210
+ * The number must be exactly 10 digits and begin with a valid Indian
+ * mobile prefix (6, 7, 8, or 9). Optionally prefixed with +91.
+ */
+const INDIAN_MOBILE_REGEX = /^(\+91[\s-]?)?[6-9]\d{9}$/;
+
+/**
  * Zod schema for updating a user's profile.
  *
  * Email is intentionally read-only — customers cannot change their
@@ -18,7 +29,8 @@ const updateProfileSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^[+]?[\d\s-]{10,15}$/, 'Enter a valid phone number')
+    .regex(INDIAN_MOBILE_REGEX, 'Enter a valid 10-digit Indian mobile number.')
+    .transform((val) => (val ? val.replace(/[\s-]/g, '') : val))
     .nullable()
     .optional(),
   avatar: z

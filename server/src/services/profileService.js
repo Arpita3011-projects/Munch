@@ -1,6 +1,16 @@
 const User = require('../models/User');
 
 /**
+ * Normalize a phone number to its canonical stored form.
+ * Strips spaces and dashes so both "98765 43210" and "+91 98765-43210"
+ * are stored as "9876543210" / "+919876543210".
+ */
+function normalizePhone(value) {
+  if (value === null || value === undefined) return value;
+  return String(value).replace(/[\s-]/g, '');
+}
+
+/**
  * Business logic for a customer's profile.
  *
  * The profile is backed by the User document. Email is intentionally
@@ -38,7 +48,7 @@ class ProfileService {
     }
 
     if (data.name !== undefined) user.name = data.name;
-    if (data.phone !== undefined) user.phone = data.phone;
+    if (data.phone !== undefined) user.phone = normalizePhone(data.phone);
     if (data.avatar !== undefined) user.avatar = data.avatar;
 
     await user.save();

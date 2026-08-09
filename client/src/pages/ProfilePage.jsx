@@ -108,8 +108,11 @@ function EditProfileModal({ isOpen, user, saving, error, onClose, onSubmit }) {
   const validate = () => {
     const errors = {};
     if (!form.name.trim()) errors.name = 'Name is required';
-    if (form.phone.trim() && !/^[+]?[\d\s-]{10,15}$/.test(form.phone.trim())) {
-      errors.phone = 'Enter a valid phone number';
+    if (
+      form.phone.trim() &&
+      !/^(\+91[\s-]?)?[6-9]\d{9}$/.test(form.phone.trim())
+    ) {
+      errors.phone = 'Enter a valid 10-digit Indian mobile number.';
     }
     setLocalErrors(errors);
     return Object.keys(errors).length === 0;
