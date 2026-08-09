@@ -1,182 +1,410 @@
-# Munch
+# Munch 🍔
 
-Restaurant ordering PWA for **The Yard Milkshake Bar**.
+Munch is a full-stack food ordering web application built with React, Node.js, Express, and MongoDB.
 
-A mobile-first progressive web application that lets customers browse the menu, customize items, place orders, track status in real time, and reorder past favorites.
+Customers can browse the menu, customize food items, manage their cart, place orders, save delivery addresses, manage their profile, and submit reviews.
 
-## Tech Stack
+The project also includes an admin panel for menu management, order management, and business analytics.
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React 18 + Vite + Tailwind CSS 3 |
-| **Backend** | Node.js + Express |
-| **Database** | MongoDB + Mongoose |
-| **Auth** | JWT (email/password) |
-| **Real-time** | Socket.io (order tracking & chat) |
-| **PWA** | vite-plugin-pwa (manifest + service worker) |
+## 🚀 Live Demo
+
+**Frontend:**  
+https://munch-two-eosin.vercel.app/
+
+**Backend API:**  
+https://munch-y4gq.onrender.com/
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```
-munch/
-├── client/                    # React + Vite PWA
-│   ├── public/
-│   │   ├── manifest.json
-│   │   └── icons/
+### Customer Features
+
+- User registration and login
+- JWT-based authentication
+- Browse menu items
+- Search menu items
+- Filter by category
+- View menu item details
+- Customize items with sizes and add-ons
+- Add items to cart
+- Update cart quantities
+- Remove items from cart
+- Favorites
+- Checkout
+- Saved delivery addresses
+- Default address management
+- Order placement
+- Order history
+- Order status tracking
+- Re-order previous items
+- Product reviews and ratings
+- Edit and delete personal reviews
+- Customer profile management
+- Profile picture upload
+- Responsive design
+- PWA support
+
+### Admin Features
+
+- Admin authentication and authorization
+- Admin dashboard
+- Menu management
+- Add menu items
+- Edit menu items
+- Mark menu items unavailable
+- Search and filter menu items
+- Order management
+- Update order status
+- Revenue analytics
+- Order statistics
+- Top-selling items
+- Most ordered categories
+- Monthly revenue
+- Recent orders
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- React Router
+- Tailwind CSS
+- JavaScript
+- Context API
+- Custom React Hooks
+- Progressive Web App (PWA)
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- Zod
+- REST APIs
+
+### Deployment
+
+- Vercel — Frontend
+- Render — Backend
+- MongoDB Atlas — Database
+
+---
+
+## 🏗️ Project Architecture
+
+Munch follows a client-server architecture.
+
+```text
+Munch
+├── client/
+│   └── React + Vite frontend
+│
+└── server/
+    └── Node.js + Express backend
+Backend Architecture
+
+The backend follows a layered architecture:
+
+Request
+   ↓
+Routes
+   ↓
+Middleware
+   ↓
+Controllers
+   ↓
+Services
+   ↓
+Models
+   ↓
+MongoDB
+Routes define API endpoints.
+Middleware handles authentication, authorization, validation, and errors.
+Controllers handle HTTP requests and responses.
+Services contain business logic.
+Models define MongoDB document structures.
+Validators validate incoming request data.
+Frontend Architecture
+
+The frontend uses reusable React components, hooks, and context.
+
+Pages
+   ↓
+Components
+   ↓
+Hooks / Context
+   ↓
+API
+   ↓
+Backend
+🔐 Authentication
+
+Munch uses JWT-based authentication.
+
+The basic authentication flow is:
+
+User Login
+    ↓
+Backend validates credentials
+    ↓
+JWT generated
+    ↓
+Client maintains authentication state
+    ↓
+Protected requests include authentication
+    ↓
+Backend verifies JWT
+
+Admin routes additionally check the user's role before allowing access.
+
+🛒 Customer Order Flow
+Register / Login
+      ↓
+Browse Menu
+      ↓
+View Item
+      ↓
+Customize Item
+      ↓
+Add to Cart
+      ↓
+Checkout
+      ↓
+Select Delivery Address
+      ↓
+Place Order
+      ↓
+Track Order
+      ↓
+Delivered
+      ↓
+Submit Review
+
+Reviews can only be submitted by customers who have actually received an order containing that item.
+
+👨‍💼 Admin Flow
+Admin Login
+     ↓
+Admin Dashboard
+     ├── Menu Management
+     ├── Order Management
+     └── Analytics
+
+The admin dashboard provides information about orders, revenue, popular items, categories, and recent activity.
+
+📊 Analytics
+
+The admin analytics dashboard calculates metrics from real MongoDB data.
+
+It includes:
+
+Total orders
+Today's orders
+Total revenue
+Today's revenue
+Average order value
+Order status counts
+Top-selling items
+Most ordered categories
+Monthly revenue
+Recent orders
+
+Analytics are calculated on the server rather than using hardcoded values.
+
+📁 Project Structure
+Munch/
+│
+├── client/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── ui/           # Reusable UI kit
-│   │   │   ├── layout/       # Header, BottomNav, Layout
-│   │   │   └── domain/       # Domain-specific (future milestones)
-│   │   ├── pages/             # Route-level page components
-│   │   ├── features/          # Feature modules (future)
-│   │   ├── lib/               # Axios instance, utilities
-│   │   ├── hooks/             # Custom hooks (future)
-│   │   ├── context/            # React contexts (future)
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── tailwind.config.js
-│   ├── vite.config.js
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── lib/
+│   │   └── App.jsx
+│   │
 │   └── package.json
-├── server/                    # Express API
+│
+├── server/
 │   ├── src/
-│   │   ├── config/           # DB connection, env config
-│   │   ├── models/            # Mongoose schemas
-│   │   ├── controllers/       # Route handlers (thin)
-│   │   ├── routes/            # Express routers
-│   │   ├── middleware/        # Auth, error handling, validation
-│   │   ├── services/          # Business logic
-│   │   └── sockets/           # Socket.io event handlers
-│   ├── .env.example
-│   ├── server.js
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   ├── validators/
+│   │   ├── config/
+│   │   └── app.js
+│   │
 │   └── package.json
+│
+├── .gitignore
 └── README.md
-```
+🔄 Backend Request Flow
 
----
+For example, when a customer places an order:
 
-## Getting Started
+React Checkout Page
+        ↓
+POST /api/v1/orders
+        ↓
+Authentication Middleware
+        ↓
+Validation Middleware
+        ↓
+Order Controller
+        ↓
+Order Service
+        ↓
+Order Model
+        ↓
+MongoDB
+        ↓
+Response
+        ↓
+React UI
 
-### Prerequisites
+This separation keeps HTTP handling, business logic, and database operations organized.
 
-- **Node.js** 18+ (LTS recommended)
-- **MongoDB** 6+ (local or Atlas)
-- A code editor
+⚙️ Running Locally
+1. Clone the repository
+git clone 
+cd Munch
 
-### 1. Clone & Install
+Replace YOUR_GITHUB_REPOSITORY_URL with your GitHub repository URL.
 
-```bash
-# Install server dependencies
+2. Install backend dependencies
 cd server
 npm install
+3. Create backend environment file
 
-# Install client dependencies
-cd ../client
-npm install
-```
+Create:
 
-### 2. Environment Variables
+server/.env
 
-```bash
-# Server
-cd server
-cp .env.example .env
-```
+Use server/.env.example as a reference and add the required environment variables.
 
-Edit `server/.env` with your values. The server will **fail fast** if required
-variables are missing.
-
-| Variable | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `PORT` | No | API server port | `5000` |
-| `NODE_ENV` | No | Environment mode | `development` |
-| `CLIENT_URL` | No | Frontend URL (for CORS) | `http://localhost:5173` |
-| `MONGODB_URI` | No | MongoDB connection string | `mongodb://localhost:27017/munch` |
-| `JWT_SECRET` | **Yes** | Secret for signing JWT tokens | — |
-
-**Generate a secure JWT_SECRET:**
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-### 3. Start Development Servers
-
-In two terminals:
-
-```bash
-# Terminal 1 — Server
-cd server
+4. Start the backend
 npm run dev
+5. Install frontend dependencies
 
-# Terminal 2 — Client
+Open another terminal:
+
 cd client
+npm install
+6. Create frontend environment file
+
+Create:
+
+client/.env
+
+Configure the frontend API URL according to your local backend.
+
+7. Start the frontend
 npm run dev
-```
+🔒 Environment Variables
 
-- **Client**: http://localhost:5173
-- **API**: http://localhost:5000/api/v1/health
+Sensitive configuration is stored using environment variables and is not committed to GitHub.
 
----
+Examples include:
 
-## Design System
+MONGODB_URI
+JWT_SECRET
+VITE_API_BASE_URL
 
-### Colors
+Never commit .env files containing secrets.
 
-| Token | Hex |
-|-------|-----|
-| `brand.pink` | `#FF2D87` |
-| `brand.pink-dark` | `#E0176B` |
-| `brand.charcoal` | `#1F1B24` |
-| `brand.cream` | `#FFF8F0` |
-| `brand.cream-2` | `#FFEFDD` |
-| `success` | `#2FAE6B` |
-| `warning` | `#F5A623` |
-| `error` | `#E5484D` |
+📱 Responsive Design
 
-### Typography
+Munch is designed to work across:
 
-- **Display/Headings**: Baloo 2 (rounded, confident)
-- **Body**: Inter (clean, legible at small sizes)
-- **Numerals**: tabular-nums (consistent price widths)
+Mobile
+Tablet
+Laptop
+Desktop
 
-### Spacing
+Both customer and admin interfaces adapt to different screen sizes.
 
-- 4px scale with generous whitespace
-- `rounded-2xl` (16px) for cards
-- `rounded-full` for pills/buttons/tags
+🧪 Verification
 
----
+The backend was checked using:
 
-## Development Roadmap (P1 — Customer App)
+node --check
 
-| # | Milestone | Status |
-|---|-----------|--------|
-| 1 | Project scaffold + Design system | ✅ |
-| 2 | Auth (email/password) + Profile shell | ✅ |
-| 3 | Home / Discovery — browse, search, filters | ⬜ |
-| 4 | Item detail + Customization + Favourites | ⬜ |
-| 5 | Cart + Checkout (stubbed payment) | ⬜ |
-| 6 | Order tracking with live timeline | ⬜ |
-| 7 | Order history + Re-order | ⬜ |
-| 8 | In-app chat (customer ↔ store) | ⬜ |
-| 9 | Ratings & Reviews + Push notifications | ⬜ |
-| 10 | Saved addresses + Profile polish + PWA offline | ⬜ |
+The frontend production build was verified using:
 
----
+npm run build
 
-## API Conventions
+The application has been tested across the major customer and admin workflows.
 
-- Base URL: `/api/v1`
-- Auth: `Authorization: Bearer <jwt>`
-- Pagination: `?page=1&limit=20`
-- Errors: `{ success: false, message, code }`
+🌐 Deployment
+Frontend
 
----
+Deployed on Vercel:
 
-## License
+https://munch-two-eosin.vercel.app/
 
-Private — The Yard Milkshake Bar
+Backend
 
+Deployed on Render:
+
+https://munch-y4gq.onrender.com/
+
+Database
+
+MongoDB Atlas is used as the production database.
+
+🎯 What I Learned
+
+This project helped me understand:
+
+React component architecture
+React Hooks and Context API
+REST API development
+Express.js
+MongoDB and Mongoose
+JWT authentication
+Authorization and protected routes
+Middleware
+Zod validation
+CRUD operations
+Controller and service architecture
+API integration
+State management
+Order management
+Reviews and ratings
+Admin dashboards
+Analytics
+Responsive UI development
+Production deployment
+Debugging production issues
+📌 Future Improvements
+
+Possible future improvements include:
+
+Real payment gateway integration
+Email or SMS order notifications
+Advanced reporting
+Dedicated image storage
+More advanced food recommendations
+👩‍💻 Author
+
+Arpita
+
+Full-Stack Web Development Project
+
+Munch was built as a learning-focused project to understand how a complete full-stack application works from the frontend to the backend and database.
+
+
+After replacing the file, run:
+
+```bash
+git add README.md
+git commit -m "Improve project README"
+git push origin main
