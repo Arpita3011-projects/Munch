@@ -274,11 +274,8 @@ This separation keeps HTTP handling, business logic, and database operations org
 
 ⚙️ Running Locally
 1. Clone the repository
-git clone 
+git clone https://github.com/Arpita3011-projects/Munch.git
 cd Munch
-
-Replace YOUR_GITHUB_REPOSITORY_URL with your GitHub repository URL.
-
 2. Install backend dependencies
 cd server
 npm install
@@ -402,9 +399,9 @@ Full-Stack Web Development Project
 Munch was built as a learning-focused project to understand how a complete full-stack application works from the frontend to the backend and database.
 
 
-After replacing the file, run:
+### Then save and push
 
 ```bash
 git add README.md
-git commit -m "Improve project README"
+git commit -m "Fix README formatting"
 git push origin main
