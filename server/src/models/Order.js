@@ -130,6 +130,43 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+/**
+ * Canonical payment methods accepted by the Order model.
+ */
+const PAYMENT_METHODS = ['Cash on Delivery', 'UPI', 'Card'];
+
+/**
+ * Normalize a raw paymentMethod (including legacy / unknown values) to a
+ * canonical enum value. Ensures documents can never be persisted with an
+ * invalid value — this is what previously caused Mongoose enum validation
+ * errors for legacy orders stored as "mock".
+ */
+function normalizePaymentMethod(value) {
+  if (PAYMENT_METHODS.includes(value)) return value;
+
+  switch ((value || '').toLowerCase()) {
+    case 'cash':
+    case 'cash_on_delivery':
+    case 'cod':
+    case 'mock':
+      return 'Cash on Delivery';
+    case 'upi':
+      return 'UPI';
+    case 'card':
+      return 'Card';
+    default:
+      return 'Cash on Delivery';
+  }
+}
+
+// Sanitize paymentMethod before validation so legacy/invalid values are
+// coerced to a canonical enum value instead of throwing a validation error.
+orderSchema.pre('validate', function normalize() {
+  if (this.paymentMethod !== undefined && this.paymentMethod !== null) {
+    this.paymentMethod = normalizePaymentMethod(this.paymentMethod);
+  }
+});
+
 // Index for efficient user order lookups (sorted by newest first)
 orderSchema.index({ user: 1, createdAt: -1 });
 

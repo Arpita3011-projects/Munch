@@ -2,7 +2,9 @@
  * Payment method helpers.
  *
  * Demo portfolio app — no real payment gateway is used. The values below
- * are stored on the order and rendered across the customer + admin UI.
+ * are the canonical set. They are stored on the order and rendered across
+ * the customer + admin UI, and must match the backend Order model enum:
+ *   ['Cash on Delivery', 'UPI', 'Card']
  */
 
 export const PAYMENT_METHODS = [
@@ -29,8 +31,10 @@ export const PAYMENT_METHODS = [
 export const DEFAULT_PAYMENT_METHOD = 'Cash on Delivery';
 
 /**
- * Map a stored paymentMethod value (including legacy values) to a
- * user-friendly display label.
+ * Map a stored paymentMethod value to a user-friendly display label.
+ * The backend model normalizes legacy / unknown values to a canonical enum
+ * value on write, so "mock" / "cash" here are only defensive fallbacks for
+ * any pre-existing documents that were stored before normalization.
  */
 export function paymentLabel(value) {
   switch (value) {
