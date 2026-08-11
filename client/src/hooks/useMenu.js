@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../lib/axios';
 import { useDebounce } from './useDebounce';
+import { retryWithWakeup } from '../lib/retryWithWakeup';
 
 /**
  * Hook for fetching and managing menu state.
@@ -17,9 +18,11 @@ export function useMenu() {
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isWakingUp, setIsWakingUp] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [page, setPage] = useState(1);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -45,12 +48,33 @@ export function useMenu() {
   const fetchMenu = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setIsWakingUp(false);
+
     try {
       const params = { page, limit: 20 };
       if (debouncedSearch) params.search = debouncedSearch;
       if (selectedCategory) params.category = selectedCategory;
 
-      const res = await api.get('/menu', { params });
+      const fetchWithRetry = async () => {
+        return api.get('/menu', { params });
+      };
+
+      let res;
+      if (isInitialLoad) {
+        // First menu load: retry on cold-start errors
+        res = await retryWithWakeup(fetchWithRetry, {
+          maxAttempts: 4,
+          onRetry: (attempt) => {
+            // Show "waking up" state during retries
+            setIsWakingUp(true);
+          },
+        });
+        setIsInitialLoad(false);
+      } else {
+        // Subsequent loads: no retries, normal error handling
+        res = await fetchWithRetry();
+      }
+
       setItems(res.data.data.items);
       setPagination(res.data.data.pagination);
     } catch (err) {
@@ -59,8 +83,9 @@ export function useMenu() {
       setItems([]);
     } finally {
       setLoading(false);
+      setIsWakingUp(false);
     }
-  }, [debouncedSearch, selectedCategory, page]);
+  }, [debouncedSearch, selectedCategory, page, isInitialLoad]);
 
   useEffect(() => {
     fetchMenu();
@@ -90,6 +115,7 @@ export function useMenu() {
     pagination,
     loading,
     error,
+    isWakingUp,
     search,
     selectedCategory,
     page,

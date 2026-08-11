@@ -24,7 +24,7 @@ import { useAuth } from '../hooks/useAuth';
  */
 export default function HomePage() {
   const {
-    items, categories, pagination, loading, error,
+    items, categories, pagination, loading, error, isWakingUp,
     search, selectedCategory, changeSearch, changeCategory, changePage,
   } = useMenu();
 
@@ -42,9 +42,9 @@ const { isFavorite, toggleFavorite } = useFavorites();
   const firstName = user?.name?.split(' ')[0] || 'foodie';
 
   const hasActiveFilters = search || selectedCategory;
-  const showEmptyState = !loading && !error && items.length === 0;
-  const showErrorState = !loading && error;
-  const showPagination = !loading && !error && pagination.totalPages > 1;
+  const showEmptyState = !loading && !error && !isWakingUp && items.length === 0;
+  const showErrorState = !loading && error && !isWakingUp;
+  const showPagination = !loading && !error && !isWakingUp && pagination.totalPages > 1;
 
   const itemsLabel = pagination.total || items.length || 0;
 
@@ -195,7 +195,26 @@ className="w-full h-full object-cover"
         )}
 
         {/* ══════════ LOADING / ERROR / EMPTY STATES ══════════ */}
-        {loading && (
+        {isWakingUp && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 rounded-full bg-brand-pink/10 flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <svg className="w-8 h-8 text-brand-pink" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 15l-2.25 2.25m0 0l-2.25-2.25m2.25 2.25V4.5" />
+                </svg>
+              </div>
+            </div>
+            <p className="text-lg font-display font-semibold text-brand-charcoal mb-1">Starting Munch...</p>
+            <p className="text-sm text-brand-charcoal/50 mb-6">The server is waking up. This may take a moment on the first visit.</p>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-brand-pink/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-2 h-2 rounded-full bg-brand-pink/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-2 h-2 rounded-full bg-brand-pink/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
+
+        {loading && !isWakingUp && (
           <div className={gridClass}>
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-warm">
@@ -245,7 +264,7 @@ className="w-full h-full object-cover"
         )}
 
         {/* ══════════ 4 · POPULAR PICKS ══════════ */}
-        {!loading && !error && popularItems.length > 0 && (
+        {!loading && !error && !isWakingUp && popularItems.length > 0 && (
           <section className="mb-6">
             <div className="flex items-center justify-between gap-3 mb-3">
               <div>
@@ -281,7 +300,7 @@ className="w-full h-full object-cover"
         )}
 
         {/* ══════════ 5 · SLIM FEATURE STRIP ══════════ */}
-        {!loading && !error && items.length > 0 && (
+        {!loading && !error && !isWakingUp && items.length > 0 && (
           <section className="grid grid-cols-2 md:grid-cols-4 gap-3 rounded-3xl bg-gradient-to-r from-brand-cream-2/50 to-brand-cream/50 border border-brand-cream-2/40 p-3.5 md:p-4 mb-6">
             {FEATURES.map((feature) => (
               <div key={feature.title} className="flex items-center gap-2.5 min-w-0">
@@ -297,7 +316,7 @@ className="w-full h-full object-cover"
         )}
 
         {/* ══════════ 6 · MORE TO EXPLORE ══════════ */}
-        {!loading && !error && moreItems.length > 0 && (
+        {!loading && !error && !isWakingUp && moreItems.length > 0 && (
           <section id="more-to-explore" className="scroll-mt-20 mb-6">
             <div className="flex items-center justify-between gap-3 mb-3">
               <h2 className="text-xl md:text-2xl font-display font-extrabold text-brand-charcoal">
