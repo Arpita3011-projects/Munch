@@ -8,11 +8,29 @@ The project also includes an admin panel for menu management, order management, 
 
 ## 🚀 Live Demo
 
-**Frontend:**  
+**Frontend:**
 https://munch-two-eosin.vercel.app/
 
-**Backend API:**  
+**Backend API:**
 https://munch-y4gq.onrender.com/
+
+---
+
+## 🔑 Demo Credentials
+
+### Customer Demo
+
+* **Email:** `your-customer-demo-email`
+* **Password:** `your-customer-demo-password`
+
+### Admin Demo
+
+* **Email:** `your-admin-demo-email`
+* **Password:** `your-admin-demo-password`
+
+Use the admin account to explore the dashboard, menu management, order management, and analytics features.
+
+> These should be dedicated demo accounts. Do not use personal or sensitive credentials.
 
 ---
 
@@ -20,48 +38,48 @@ https://munch-y4gq.onrender.com/
 
 ### Customer Features
 
-- User registration and login
-- JWT-based authentication
-- Browse menu items
-- Search menu items
-- Filter by category
-- View menu item details
-- Customize items with sizes and add-ons
-- Add items to cart
-- Update cart quantities
-- Remove items from cart
-- Favorites
-- Checkout
-- Saved delivery addresses
-- Default address management
-- Order placement
-- Order history
-- Order status tracking
-- Re-order previous items
-- Product reviews and ratings
-- Edit and delete personal reviews
-- Customer profile management
-- Profile picture upload
-- Responsive design
-- PWA support
+* User registration and login
+* JWT-based authentication
+* Browse menu items
+* Search menu items
+* Filter by category
+* View menu item details
+* Customize items with sizes and add-ons
+* Add items to cart
+* Update cart quantities
+* Remove items from cart
+* Favorites
+* Checkout
+* Saved delivery addresses
+* Default address management
+* Order placement
+* Order history
+* Order status tracking
+* Re-order previous items
+* Product reviews and ratings
+* Edit and delete personal reviews
+* Customer profile management
+* Profile picture upload
+* Responsive design
+* PWA support
 
 ### Admin Features
 
-- Admin authentication and authorization
-- Admin dashboard
-- Menu management
-- Add menu items
-- Edit menu items
-- Mark menu items unavailable
-- Search and filter menu items
-- Order management
-- Update order status
-- Revenue analytics
-- Order statistics
-- Top-selling items
-- Most ordered categories
-- Monthly revenue
-- Recent orders
+* Admin authentication and authorization
+* Admin dashboard
+* Menu management
+* Add menu items
+* Edit menu items
+* Mark menu items unavailable
+* Search and filter menu items
+* Order management
+* Update order status
+* Revenue analytics
+* Order statistics
+* Top-selling items
+* Most ordered categories
+* Monthly revenue
+* Recent orders
 
 ---
 
@@ -69,30 +87,30 @@ https://munch-y4gq.onrender.com/
 
 ### Frontend
 
-- React
-- Vite
-- React Router
-- Tailwind CSS
-- JavaScript
-- Context API
-- Custom React Hooks
-- Progressive Web App (PWA)
+* React
+* Vite
+* React Router
+* Tailwind CSS
+* JavaScript
+* Context API
+* Custom React Hooks
+* Progressive Web App (PWA)
 
 ### Backend
 
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT
-- Zod
-- REST APIs
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT
+* Zod
+* REST APIs
 
 ### Deployment
 
-- Vercel — Frontend
-- Render — Backend
-- MongoDB Atlas — Database
+* Vercel — Frontend
+* Render — Backend
+* MongoDB Atlas — Database
 
 ---
 
@@ -107,10 +125,13 @@ Munch
 │
 └── server/
     └── Node.js + Express backend
-Backend Architecture
+```
+
+### Backend Architecture
 
 The backend follows a layered architecture:
 
+```text
 Request
    ↓
 Routes
@@ -124,16 +145,20 @@ Services
 Models
    ↓
 MongoDB
-Routes define API endpoints.
-Middleware handles authentication, authorization, validation, and errors.
-Controllers handle HTTP requests and responses.
-Services contain business logic.
-Models define MongoDB document structures.
-Validators validate incoming request data.
-Frontend Architecture
+```
+
+* **Routes** define API endpoints.
+* **Middleware** handles authentication, authorization, validation, and errors.
+* **Controllers** handle HTTP requests and responses.
+* **Services** contain business logic.
+* **Models** define MongoDB document structures.
+* **Validators** validate incoming request data.
+
+### Frontend Architecture
 
 The frontend uses reusable React components, hooks, and context.
 
+```text
 Pages
    ↓
 Components
@@ -143,12 +168,17 @@ Hooks / Context
 API
    ↓
 Backend
-🔐 Authentication
+```
+
+---
+
+## 🔐 Authentication
 
 Munch uses JWT-based authentication.
 
 The basic authentication flow is:
 
+```text
 User Login
     ↓
 Backend validates credentials
@@ -160,10 +190,15 @@ Client maintains authentication state
 Protected requests include authentication
     ↓
 Backend verifies JWT
+```
 
 Admin routes additionally check the user's role before allowing access.
 
-🛒 Customer Order Flow
+---
+
+## 🛒 Customer Order Flow
+
+```text
 Register / Login
       ↓
 Browse Menu
@@ -185,39 +220,51 @@ Track Order
 Delivered
       ↓
 Submit Review
+```
 
-Reviews can only be submitted by customers who have actually received an order containing that item.
+Reviews can only be submitted by customers who have received an order containing that item.
 
-👨‍💼 Admin Flow
+---
+
+## 👨‍💼 Admin Flow
+
+```text
 Admin Login
      ↓
 Admin Dashboard
      ├── Menu Management
      ├── Order Management
      └── Analytics
+```
 
 The admin dashboard provides information about orders, revenue, popular items, categories, and recent activity.
 
-📊 Analytics
+---
+
+## 📊 Analytics
 
 The admin analytics dashboard calculates metrics from real MongoDB data.
 
 It includes:
 
-Total orders
-Today's orders
-Total revenue
-Today's revenue
-Average order value
-Order status counts
-Top-selling items
-Most ordered categories
-Monthly revenue
-Recent orders
+* Total orders
+* Today's orders
+* Total revenue
+* Today's revenue
+* Average order value
+* Order status counts
+* Top-selling items
+* Most ordered categories
+* Monthly revenue
+* Recent orders
 
 Analytics are calculated on the server rather than using hardcoded values.
 
-📁 Project Structure
+---
+
+## 📁 Project Structure
+
+```text
 Munch/
 │
 ├── client/
@@ -246,10 +293,15 @@ Munch/
 │
 ├── .gitignore
 └── README.md
-🔄 Backend Request Flow
+```
+
+---
+
+## 🔄 Backend Request Flow
 
 For example, when a customer places an order:
 
+```text
 React Checkout Page
         ↓
 POST /api/v1/orders
@@ -269,139 +321,189 @@ MongoDB
 Response
         ↓
 React UI
+```
 
 This separation keeps HTTP handling, business logic, and database operations organized.
 
-⚙️ Running Locally
-1. Clone the repository
+---
+
+## ⚙️ Running Locally
+
+### 1. Clone the repository
+
+```bash
 git clone https://github.com/Arpita3011-projects/Munch.git
 cd Munch
-2. Install backend dependencies
+```
+
+### 2. Install backend dependencies
+
+```bash
 cd server
 npm install
-3. Create backend environment file
+```
+
+### 3. Create backend environment file
 
 Create:
 
+```text
 server/.env
+```
 
-Use server/.env.example as a reference and add the required environment variables.
+Use `server/.env.example` as a reference and add the required environment variables.
 
-4. Start the backend
+### 4. Start the backend
+
+```bash
 npm run dev
-5. Install frontend dependencies
+```
+
+### 5. Install frontend dependencies
 
 Open another terminal:
 
+```bash
 cd client
 npm install
-6. Create frontend environment file
+```
+
+### 6. Create frontend environment file
 
 Create:
 
+```text
 client/.env
+```
 
 Configure the frontend API URL according to your local backend.
 
-7. Start the frontend
+### 7. Start the frontend
+
+```bash
 npm run dev
-🔒 Environment Variables
+```
+
+---
+
+## 🔒 Environment Variables
 
 Sensitive configuration is stored using environment variables and is not committed to GitHub.
 
 Examples include:
 
+```text
 MONGODB_URI
 JWT_SECRET
 VITE_API_BASE_URL
+```
 
-Never commit .env files containing secrets.
+Never commit `.env` files containing secrets.
 
-📱 Responsive Design
+---
+
+## 📱 Responsive Design
 
 Munch is designed to work across:
 
-Mobile
-Tablet
-Laptop
-Desktop
+* Mobile
+* Tablet
+* Laptop
+* Desktop
 
 Both customer and admin interfaces adapt to different screen sizes.
 
-🧪 Verification
+---
+
+## 🧪 Verification
 
 The backend was checked using:
 
+```bash
 node --check
+```
 
 The frontend production build was verified using:
 
+```bash
 npm run build
+```
 
 The application has been tested across the major customer and admin workflows.
 
-🌐 Deployment
-Frontend
+---
+
+## 🌐 Deployment
+
+### Frontend
 
 Deployed on Vercel:
 
 https://munch-two-eosin.vercel.app/
 
-Backend
+### Backend
 
 Deployed on Render:
 
 https://munch-y4gq.onrender.com/
 
-Database
+### Database
 
 MongoDB Atlas is used as the production database.
 
-🎯 What I Learned
+---
+
+## 🎯 What I Learned
 
 This project helped me understand:
 
-React component architecture
-React Hooks and Context API
-REST API development
-Express.js
-MongoDB and Mongoose
-JWT authentication
-Authorization and protected routes
-Middleware
-Zod validation
-CRUD operations
-Controller and service architecture
-API integration
-State management
-Order management
-Reviews and ratings
-Admin dashboards
-Analytics
-Responsive UI development
-Production deployment
-Debugging production issues
-📌 Future Improvements
+* React component architecture
+* React Hooks and Context API
+* REST API development
+* Express.js
+* MongoDB and Mongoose
+* JWT authentication
+* Authorization and protected routes
+* Middleware
+* Zod validation
+* CRUD operations
+* Controller and service architecture
+* API integration
+* State management
+* Order management
+* Reviews and ratings
+* Admin dashboards
+* Analytics
+* Responsive UI development
+* Production deployment
+* Debugging production issues
+
+---
+
+## 📌 Future Improvements
 
 Possible future improvements include:
 
-Real payment gateway integration
-Email or SMS order notifications
-Advanced reporting
-Dedicated image storage
-More advanced food recommendations
-👩‍💻 Author
+* Real payment gateway integration
+* Email or SMS order notifications
+* Advanced reporting
+* Dedicated image storage
+* More advanced food recommendations
 
-Arpita
+---
+
+## 👩‍💻 Author
+
+**Arpita**
 
 Full-Stack Web Development Project
 
 Munch was built as a learning-focused project to understand how a complete full-stack application works from the frontend to the backend and database.
 
+---
 
-### Then save and push
+## 📂 Repository
 
-```bash
-git add README.md
-git commit -m "Fix README formatting"
-git push origin main
+GitHub:
+
+https://github.com/Arpita3011-projects/Munch
