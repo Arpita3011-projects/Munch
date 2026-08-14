@@ -44,6 +44,7 @@ const createMenuItem = async (req, res, next) => {
 const updateMenuItem = async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const item = await adminService.updateMenuItem(id, req.body);
 
     res.json({

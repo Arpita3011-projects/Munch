@@ -211,6 +211,7 @@ class AdminService {
    */
   async createMenuItem(data) {
     const item = await MenuItem.create(data);
+
     return this.formatAdminMenuItem(item);
   }
 
@@ -224,7 +225,9 @@ class AdminService {
     }
 
     item.set(data);
+
     await item.save();
+
     return this.formatAdminMenuItem(item);
   }
 
